@@ -1,0 +1,57 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+const int trig = 9;
+const int echo = 8;
+const int vcc = 10;
+const int gnd = 7;
+void setup()
+{
+  Serial.begin(9600);
+  //pinMode(0, OUTPUT);
+  //pinMode(1, OUTPUT);
+  //pinMode(13, OUTPUT);
+  pinMode(trig, OUTPUT);
+  pinMode(echo, INPUT);
+  pinMode(vcc, OUTPUT);
+  pinMode(gnd, OUTPUT);
+  lcd.begin(16, 2);
+  //lcd.clear();
+}
+
+void loop()
+{
+  
+  digitalWrite(vcc, HIGH);
+  digitalWrite(gnd, LOW);
+  //digitalWrite(0, LOW);
+  //digitalWrite(1, HIGH);
+  digitalWrite(trig, HIGH);   // trig ON
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);    // trig OFF
+  delayMicroseconds(10);
+  long x = pulseIn(echo, HIGH); 
+  int distance = x / 29 / 2; // speed of ultrasonic waves is 340m/s converted to cm/microseconds= 29 cm/usec, so it gives distance in cms
+  Serial.println(distance);
+  if (distance<16)
+    {
+      lcd.clear();
+      lcd.setCursor(1,0);
+      lcd.print("Too Close");
+      lcd.setCursor(1, 1);
+      lcd.print(distance);
+      lcd.print("cm");
+      //digitalWrite(13, LOW);
+      delay(200);
+    }
+  else
+    {
+      lcd.clear();
+      lcd.setCursor(1,0);
+      lcd.print("Safe to park");
+      lcd.setCursor(1, 1);
+      lcd.print(distance);
+      lcd.print("cm");
+      //digitalWrite(13, HIGH);
+      delay(200);
+    }
+}
